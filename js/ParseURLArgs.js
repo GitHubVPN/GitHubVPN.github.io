@@ -1,6 +1,6 @@
 function ParseURLArgs()
 {
-	var query = location.search;
+	var query = decodeURIComponent(location.search);
 	//得到URL中的参数
 	var result = {};
 	if (query == "" || query == "?")
