@@ -26,17 +26,27 @@ if (window.db.token){
 					};
 					if (info.encoding == "base64") {
 						var content = utf8to16(atob(info.content));
+						console.log(content);
 						var link = req_url.split("?")[0].split(".");	
 						window.current_file = blob([content]);
 						var blob_url = window.URL.createObjectURL(window.current_file);
 						var suffix = link[link.length - 1];
 						if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg") {
 
-
-							document.querySelector("#content").innerHTML = "<img src=" + blob_url + " alt=Image>";
+							window.current_file = req_url;
+							document.querySelector("#content").innerHTML = "<img src=" + geturl() + " alt=Image>";
+						} else if (suffix == "mp4") {
+									var blob_url = window.URL.createObjectURL(xhr.response);
+									window.current_file = xhr.response;
+									document.querySelector("#content").innerHTML = "<video src=" + blob_url + " height=100% width=100% controls>";
+						} else if (suffix == "mp3" || suffix == "wmv") {
+									var blob_url = window.URL.createObjectURL(xhr.response);
+									window.current_file = xhr.response;
+									document.querySelector("#content").innerHTML = "<audio src=" + blob_url + " controls>";
 						} else {
 							if (isBinaryFile(content)){
 								document.querySelector("#content").innerHTML = "<p style='text-align:center'>Binary File</p>";
+								window.current_file = req_url;
 							} else {
 								document.querySelector("#content").innerHTML = "<textarea id=code readonly cols=200 rows=120>" + content + "</textarea>";
 							};
@@ -82,6 +92,16 @@ if (window.db.token){
 									var blob_url = window.URL.createObjectURL(xhr.response);
 									window.current_file = xhr.response;
 									document.querySelector("#content").innerHTML = "<img src=" + blob_url + " alt=Image>";
+								};
+								if (suffix == "mp4") {
+									var blob_url = window.URL.createObjectURL(xhr.response);
+									window.current_file = xhr.response;
+									document.querySelector("#content").innerHTML = "<video src=" + blob_url + " height=100% width=100% controls>";
+								};
+								if (suffix == "mp3" || suffix == "wmv") {
+									var blob_url = window.URL.createObjectURL(xhr.response);
+									window.current_file = xhr.response;
+									document.querySelector("#content").innerHTML = "<audio src=" + blob_url + " controls>";
 								};
 							} else {
 								document.querySelector("#workspace").innerHTML = "<font color=red>Failed to load data.</font><br><a href=# onclick=javascript:location.reload();>Reload</a>";
@@ -161,7 +181,7 @@ function buildPathLink(){
 	
 };
 function download_file(){
-	var blob_url = window.URL.createObjectURL(window.current_file);
+	var blob_url = geturl();
 	var ele = document.createElement("a");
 	ele.href = blob_url;
 	var args = ParseURLArgs();
@@ -170,13 +190,32 @@ function download_file(){
 	ele.download = url[url.length - 1];
 	ele.click();
 };
+function geturl(){
+	if (typeof(window.current_file) == "string") {
+		var url = "https://api.github.com/" + window.current_file;
+		url = url.split("?")[0].split("/");
+		var i = 4;
+		var link = "https://raw.githubusercontent.com/";
+		while (i < url.length){
+			if (i == 4 || i > 6)	
+				link += url[i] + "/";
+			if (i == 5)
+				link += url[i] + "/main/";
+			i++;
+		};
+		link = link.substring(link.length-1,-1);
+		console.log(url,link,window.current_file);
+		return link;
+	} else return window.URL.createObjectURL(window.current_file);
+	
+};
 function isBinaryFile(content){
 	var len = content.length;
 	var bin_char = 0;
 	var i = 0;
 	while (i < content.length){
 		var ascii_code = content.charCodeAt(i);
-		if ((ascii_code < 32 || ascii_code > 126) && (content[i] != "\n" && content[i] != "\r" && content[i] != "\t" && content[i] != "\b"))
+		if ((ascii_code < 32) && (content[i] != "\n" && content[i] != "\r" && content[i] != "\t" && content[i] != "\b"))
 			bin_char++;
 		i++;
 	};
