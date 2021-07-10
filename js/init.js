@@ -22,7 +22,7 @@ function getrepodata(repoid){
 	getfile("repositories/" + repoid + "").then(function(res){
 		console.log(res);
 		res.response = JSON.parse(res.response);
-		var repos = {name:res.response.name,is_private:res.response.private,id:res.response.id};
+		var repos = {name:res.response.name,is_private:res.response.private,id:res.response.id,fullname:res.response.full_name};
 		localStorage.setItem("repos_" + repoid,JSON.stringify(repos));
 		location.reload();
 	}).catch(function(err){
