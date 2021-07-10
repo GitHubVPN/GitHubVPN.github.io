@@ -13,7 +13,7 @@ if (window.db.token){
 					document.querySelector("#workspace").innerHTML = "<font color=red>The project is not in the local database.</font><br><a href=# onclick=javascript:getrepodata(" + repo_id + ");>Fetch</a>";
 					return -1;
 				} else repo_data = JSON.parse(repo_data);
-				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='Edit' onclick=javascript:go_edit_file(); id=edit_button><input type=button value='Open it on GitHub' onclick=javascript:open_github(); id=edit_button><input type=button value='Download' onclick=javascript:download_file(); id=download_button><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr><div id=content></div>";
+				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='Edit' onclick=javascript:go_edit_file(); id=edit_button><input type=button value='Open it on GitHub' onclick=javascript:open_github(); id=edit_button><input type=button value='Download' onclick=javascript:download_file(); id=download_button><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr><div id=content>Fetching your file from <font color=red>api.github.com</font>.<br>Please wait a moment.</div>";
 				buildPathLink();
 				var req_url = args.url;
 				req_url = req_url.substring(23).split("?")[0];
@@ -35,7 +35,7 @@ if (window.db.token){
 						if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg") {
 							document.querySelector("#edit_button").disabled = true;
 							window.current_file = req_url;
-							document.querySelector("#content").innerHTML = "<img src=" + geturl() + " alt=Image>";
+							document.querySelector("#content").innerHTML = "<img src=" + replaceURL(geturl()) + " alt=Image>";
 						} else if (suffix == "mp4") {
 									document.querySelector("#edit_button").disabled = true;
 									var blob_url = window.URL.createObjectURL(xhr.response);
@@ -67,7 +67,6 @@ if (window.db.token){
 					} else if (err.status == 403) {
 						//File is too large
 						document.querySelector("#edit_button").disabled = true;
-						document.querySelector("#content").innerHTML = "<font color=red>File is too large. (More than 1MB)</font><br>Fetching your file from <font color=red>raw.githubusercontent.com</font>......<br>Please wait a moment.";
 						if (window.XMLHttpRequest){
 							var xhr = new XMLHttpRequest();
 						} else {
@@ -85,6 +84,14 @@ if (window.db.token){
 							i++;
 						};
 						link = link.substring(link.length-1,-1);
+						var suffix = url[url.length-1].split(".");
+						suffix = suffix[suffix.length - 1];
+						if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg" || suffix == "mp3" || suffix == "wmv" || suffix == "mp4") {
+							link = replaceURL(link);
+							document.querySelector("#content").innerHTML = "<font color=red>File is too large. (More than 1MB)</font><br>Fetching your file from <font color=red>cdn.jsdelivr.net</font>......<br>Please wait a moment.";
+						} else {
+							document.querySelector("#content").innerHTML = "<font color=red>File is too large. (More than 1MB)</font><br>Fetching your file from <font color=red>raw.githubusercontent.com</font>......<br>Please wait a moment.";
+						};
 						console.log(link);
 						xhr.open("GET",link,true);
 						xhr.send();
@@ -116,6 +123,9 @@ if (window.db.token){
 						};
 					};
 				});
+			} else {
+				localStorage.repos = "[]";
+				location.reload();
 			};
 		});
 	 else EL(function(){
@@ -187,13 +197,21 @@ function buildPathLink(){
 };
 function download_file(){
 	var blob_url = geturl();
-	var ele = document.createElement("a");
-	ele.href = blob_url;
-	var args = ParseURLArgs();
-	var url = args.url.split("?")[0];
-	url = url.split("/");
-	ele.download = url[url.length - 1];
-	ele.click();
+	var suffix = blob_url.split("/");
+	suffix = suffix[suffix.length-1].split(".");
+	suffix = suffix[suffix.length - 1];
+	if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg" || suffix == "mp3" || suffix == "wmv" || suffix == "mp4") {
+		blob_url = replaceURL(blob_url);
+		window.open(blob_url,"_blank");
+	} else {
+		var ele = document.createElement("a");
+		ele.href = blob_url;
+		var args = ParseURLArgs();
+		var url = args.url.split("?")[0];
+		url = url.split("/");
+		ele.download = url[url.length - 1]
+		ele.click();
+	};
 };
 function geturl(){
 	if (typeof(window.current_file) == "string") {
@@ -231,6 +249,10 @@ function isBinaryFile(content){
 function go_edit_file(){
 	var dat = location.href.substring(location.origin.length + 6);
 	location.href = "/edit/" + dat;
+};
+function go_delete_file(){
+	var dat = location.href.substring(location.origin.length + 6);
+	location.href = "/delete/" + dat;
 };
 function open_github(){
 	var path = "https://www.github.com/";
