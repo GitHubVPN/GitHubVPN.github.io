@@ -14,7 +14,7 @@ if (window.db.token){
 					var repos_name = repos[i].name;
 					localStorage.setItem("repos_" + repos_id,JSON.stringify({name:repos_name,is_private:is_private,id:repos_id,fullname:repos[i].full_name}));
 					var color = (is_private)?"red":"green";
-					str += "<li><font color=" + color + ">" + repos_id + " " + "<a onclick=javascript:location.href='/repo/?id=" + repos_id + "' target=_blank>" + repos_name + "</a></font></li>";
+					str += "<li><font color=" + color + ">" + repos_id + " " + "<a onclick=javascript:location.href='/repo/?id=" + repos_id + "' target=_blank>" + repos[i].full_name + "</a></font></li>";
 					i++;
 				};
 				str += "</ul>";
