@@ -4,7 +4,7 @@ if (window.db.token){
 		EL(function(){
 			document.querySelector("#userinfo").innerHTML = "<b><a onclick=javascript:window.open('/settings/','_blank');><img id=avatar height=64px width=64px src=" + localStorage.avatar_url + "><br>" + window.db.username + "</a></b><br>------<br><button onclick=javascript:logout();>Logout</button>";
 			document.querySelector("#workspace").innerHTML = "Your repositories:<br><span id=repos></span>";
-			if (window.db.repos){
+			if (window.db.repos && window.db.repos != "[]"){
 				var repos = JSON.parse(window.db.repos);
 				var i = 0;
 				var str = "<ul>";
@@ -12,7 +12,7 @@ if (window.db.token){
 					var is_private = repos[i].private;
 					var repos_id = repos[i].id;
 					var repos_name = repos[i].name;
-					localStorage.setItem("repos_" + repos_id,JSON.stringify({name:repos_name,is_private:is_private,id:repos_id}));
+					localStorage.setItem("repos_" + repos_id,JSON.stringify({name:repos_name,is_private:is_private,id:repos_id,fullname:repos[i].full_name}));
 					var color = (is_private)?"red":"green";
 					str += "<li><font color=" + color + ">" + repos_id + " " + "<a onclick=javascript:location.href='/repo/?id=" + repos_id + "' target=_blank>" + repos_name + "</a></font></li>";
 					i++;
@@ -20,7 +20,7 @@ if (window.db.token){
 				str += "</ul>";
 				document.querySelector("#repos").innerHTML = str;
 			} else {
-				getfile("users/" + window.db.username + "/repos").then(function(res){
+				getfile("user/repos").then(function(res){
 					console.log(res);
 					localStorage.repos = res.response;
 					location.reload();
