@@ -13,10 +13,11 @@ if (window.db.token){
 					document.querySelector("#workspace").innerHTML = "<font color=red>The project is not in the local database.</font><br><a href=# onclick=javascript:getrepodata(" + repo_id + ");>Fetch</a>";
 					return -1;
 				} else repo_data = JSON.parse(repo_data);
-				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='Edit' onclick=javascript:go_edit_file(); id=edit_button><input type=button value='Download' onclick=javascript:download_file(); id=download_button><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr><div id=content></div>";
+				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='Edit' onclick=javascript:go_edit_file(); id=edit_button><input type=button value='Open it on GitHub' onclick=javascript:open_github(); id=edit_button><input type=button value='Download' onclick=javascript:download_file(); id=download_button><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr><div id=content></div>";
 				buildPathLink();
 				var req_url = args.url;
 				req_url = req_url.substring(23).split("?")[0];
+				window.current_file = req_url;
 				getfile(req_url).then(function(res){
 					var info = JSON.parse(res.response);
 					console.log(res,info);
@@ -32,23 +33,27 @@ if (window.db.token){
 						var blob_url = window.URL.createObjectURL(window.current_file);
 						var suffix = link[link.length - 1];
 						if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg") {
-
+							document.querySelector("#edit_button").disabled = true;
 							window.current_file = req_url;
 							document.querySelector("#content").innerHTML = "<img src=" + geturl() + " alt=Image>";
 						} else if (suffix == "mp4") {
+									document.querySelector("#edit_button").disabled = true;
 									var blob_url = window.URL.createObjectURL(xhr.response);
 									window.current_file = xhr.response;
 									document.querySelector("#content").innerHTML = "<video src=" + blob_url + " height=100% width=100% controls>";
 						} else if (suffix == "mp3" || suffix == "wmv") {
+									document.querySelector("#edit_button").disabled = true;
 									var blob_url = window.URL.createObjectURL(xhr.response);
 									window.current_file = xhr.response;
 									document.querySelector("#content").innerHTML = "<audio src=" + blob_url + " controls>";
 						} else {
 							if (isBinaryFile(content)){
+								document.querySelector("#edit_button").disabled = true;
 								document.querySelector("#content").innerHTML = "<p style='text-align:center'>Binary File</p>";
 								window.current_file = req_url;
 							} else {
-								document.querySelector("#content").innerHTML = "<textarea id=code readonly cols=200 rows=120>" + content + "</textarea>";
+								document.querySelector("#content").innerHTML = "<textarea id=code readonly cols=200 rows=120></textarea>";
+								document.querySelector("#code").value = content;
 							};
 						};			
 					};
@@ -92,16 +97,16 @@ if (window.db.token){
 									var blob_url = window.URL.createObjectURL(xhr.response);
 									window.current_file = xhr.response;
 									document.querySelector("#content").innerHTML = "<img src=" + blob_url + " alt=Image>";
-								};
-								if (suffix == "mp4") {
+								} else if (suffix == "mp4") {
 									var blob_url = window.URL.createObjectURL(xhr.response);
 									window.current_file = xhr.response;
 									document.querySelector("#content").innerHTML = "<video src=" + blob_url + " height=100% width=100% controls>";
-								};
-								if (suffix == "mp3" || suffix == "wmv") {
+								} else if (suffix == "mp3" || suffix == "wmv") {
 									var blob_url = window.URL.createObjectURL(xhr.response);
 									window.current_file = xhr.response;
 									document.querySelector("#content").innerHTML = "<audio src=" + blob_url + " controls>";
+								} else {
+									document.querySelector("#content").innerHTML = "Sorry! The file is so large that we can't show it.";
 								};
 							} else {
 								document.querySelector("#workspace").innerHTML = "<font color=red>Failed to load data.</font><br><a href=# onclick=javascript:location.reload();>Reload</a>";
@@ -221,5 +226,17 @@ function isBinaryFile(content){
 	};
 	var ratio = bin_char / len;
 	console.log(bin_char,len,ratio);
-	return (ratio > 0.3);
+	return (ratio > 0.15);
+};
+function go_edit_file(){
+	var dat = location.href.substring(location.origin.length + 6);
+	location.href = "/edit/" + dat;
+};
+function open_github(){
+	var path = "https://www.github.com/";
+	var args = ParseURLArgs();
+	path += JSON.parse(window.db["repos_" + args.repo_id]).fullname;
+	path += "/blob/main/";
+	path += args.path;
+	window.open(path,"_blank");
 };

@@ -13,7 +13,7 @@ if (window.db.token){
 					document.querySelector("#workspace").innerHTML = "<font color=red>The project is not in the local database.</font><br><a href=# onclick=javascript:getrepodata(" + repo_id + ");>Fetch</a>";
 					return -1;
 				} else repo_data = JSON.parse(repo_data);
-				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='New File' onclick=javascript:new_file();><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr>";
+				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='New File' onclick=javascript:new_file();><input type=button value='Upload files' onclick=javascript:go_upload_files();><input type=button value='Open it on GitHub' onclick=javascript:open_github();><input type=button value='Delete' onclick=javascript:go_delete_dict();></p><hr>";
 				buildPathLink();
 				var req_url = args.url;
 				req_url = req_url.substring(23).split("?")[0];
@@ -46,7 +46,7 @@ if (window.db.token){
 					};
 					document.querySelector("#workspace").innerHTML = "<font color=red>Failed to load data.</font><br><a href=# onclick=javascript:location.reload();>Reload</a>";
 				});
-			};
+			} else location.href = "/";
 		});
 	 else EL(function(){
 			document.querySelector("#userinfo").innerHTML = "<button onclick=javascript:logout();>Logout</button>";
@@ -114,4 +114,12 @@ function buildPathLink(){
 		i--;
 	};
 	
+};
+function open_github(){
+	var path = "https://www.github.com/";
+	var args = ParseURLArgs();
+	path += JSON.parse(window.db["repos_" + args.repo_id]).fullname;
+	path += "/tree/main/";
+	path += args.path;
+	window.open(path,"_blank");
 };

@@ -11,7 +11,7 @@ if (window.db.token){
 					document.querySelector("#workspace").innerHTML = "<font color=red>The project is not in the local database.</font><br><a href=# onclick=javascript:getrepodata(" + repo_id + ");>Fetch</a>";
 					return -1;
 				} else repo_data = JSON.parse(repo_data);
-				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b><p id=tools style='text-align:right'><input type=button value='New File' onclick=javascript:new_file();></p><hr>";
+				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b><p id=tools style='text-align:right'><input type=button value='New File' onclick=javascript:new_file();><input type=button value='Upload files' onclick=javascript:go_upload_files();></p><hr>";
 				getfile("repositories/" + repo_id + "/contents").then(function(res){
 					console.log(res);
 					var info = JSON.parse(res.response);
@@ -32,7 +32,7 @@ if (window.db.token){
 					console.error(err);
 					document.querySelector("#workspace").innerHTML = "<font color=red>Failed to load data.</font><br><a href=# onclick=javascript:location.reload();>Reload</a>";
 				});
-			};
+			} else location.href = "/";
 		});
 	 else EL(function(){
 			document.querySelector("#userinfo").innerHTML = "<button onclick=javascript:logout();>Logout</button>";
