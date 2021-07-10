@@ -55,3 +55,8 @@ if (window.db.token){
 		document.querySelector("#workspace").innerHTML = "<center><p style='font-size:1.5em'>GitHub VPN Login System<br>Please input your GitHub API Access Token<br><input type=text id=github_access_token placeholder=ghp_xxxxxxxx style='width:400px'></p><a href=/aritcle/how_to_ask_for_my_github_api_access_token.html target=_blank>How to ask for my GitHub API Access Token</a><br><button onclick=login();>Confirm</button></center>";
 	});
 };
+function new_file(){
+	var dat = location.href.substring(location.origin.length + 6);
+	var args = ParseURLArgs();
+	location.href = "/newfile/" + dat.split("?")[0] + "?repo_id=" + args.id + "&path=&url=https://api.github.com/repos/" + JSON.parse(window.db["repos_" + args.id]).fullname + "/contents/";
+};
