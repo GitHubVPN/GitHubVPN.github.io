@@ -43,3 +43,6 @@ var blob = function(buffer,cfg){
 		return new MSBlobBuilder(buffer,cfg);
 	else return null;
 };
+function replaceURL(s){
+  return s;
+};
