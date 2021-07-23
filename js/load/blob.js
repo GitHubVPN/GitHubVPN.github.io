@@ -86,7 +86,7 @@ if (window.db.token){
 						link = link.substring(link.length-1,-1);
 						var suffix = url[url.length-1].split(".");
 						suffix = suffix[suffix.length - 1];
-						if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg" || suffix == "mp3" || suffix == "wmv" || suffix == "mp4") {
+						if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg" || suffix == "mp3" || suffix == "wmv" || suffix == "mp4" | suffix == "pdf") {
 							link = replaceURL(link);
 							document.querySelector("#content").innerHTML = "<font color=red>File is too large. (More than 1MB)</font><br>Fetching your file from <font color=red>cdn.jsdelivr.net</font>......<br>Please wait a moment.";
 						} else {
