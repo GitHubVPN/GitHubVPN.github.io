@@ -200,7 +200,7 @@ function download_file(){
 	var suffix = blob_url.split("/");
 	suffix = suffix[suffix.length-1].split(".");
 	suffix = suffix[suffix.length - 1];
-	if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg" || suffix == "mp3" || suffix == "wmv" || suffix == "mp4") {
+	if (suffix == "jpg" || suffix == "png" || suffix == "webp" || suffix == "bmp" || suffix == "jpeg" || suffix == "ico" || suffix == "gif" || suffix == "svg" || suffix == "mp3" || suffix == "wmv" || suffix == "mp4" || suffix == "pdf") {
 		blob_url = replaceURL(blob_url);
 		window.open(blob_url,"_blank");
 	} else {
