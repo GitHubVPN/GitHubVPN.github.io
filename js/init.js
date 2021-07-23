@@ -44,5 +44,15 @@ var blob = function(buffer,cfg){
 	else return null;
 };
 function replaceURL(s){
-  return s;
+    s = s.split("/");
+    var username = s[3];
+    var reponame = s[4];
+    var filepath = "";
+    var i = 6;
+    while (i < s.length){
+        filepath += s[i] + "/";
+        i++;
+    };
+    filepath = filepath.substring(filepath.length-1,-1);
+    return ("https://cdn.jsdelivr.net/gh/" + username + "/" + reponame + "/" + filepath);
 };
