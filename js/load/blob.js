@@ -13,7 +13,7 @@ if (window.db.token){
 					document.querySelector("#workspace").innerHTML = "<font color=red>The project is not in the local database.</font><br><a href=# onclick=javascript:getrepodata(" + repo_id + ");>Fetch</a>";
 					return -1;
 				} else repo_data = JSON.parse(repo_data);
-				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:ToMainBranch();>main</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='Edit' onclick=javascript:go_edit_file(); id=edit_button><input type=button value='Open it on GitHub' onclick=javascript:open_github(); id=edit_button><input type=button value='Download' onclick=javascript:download_file(); id=download_button><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr><div id=content>Fetching your file from <font color=red>api.github.com</font>.<br>Please wait a moment.</div>";
+				document.querySelector("#workspace").innerHTML = "<b>" + repo_data.name + "</b>/<a href=# onclick=javascript:TomasterBranch();>master</a>/<span id=path>" + args.path + "</span><p id=tools style='text-align:right'><input type=button value='Edit' onclick=javascript:go_edit_file(); id=edit_button><input type=button value='Open it on GitHub' onclick=javascript:open_github(); id=edit_button><input type=button value='Download' onclick=javascript:download_file(); id=download_button><input type=button value='Delete' onclick=javascript:go_delete_file();></p><hr><div id=content>Fetching your file from <font color=red>api.github.com</font>.<br>Please wait a moment.</div>";
 				buildPathLink();
 				var req_url = args.url;
 				req_url = req_url.substring(23).split("?")[0];
@@ -80,7 +80,7 @@ if (window.db.token){
 							if (i == 4 || i > 6)	
 								link += url[i] + "/";
 							if (i == 5)
-								link += url[i] + "/main/";
+								link += url[i] + "/master/";
 							i++;
 						};
 						link = link.substring(link.length-1,-1);
@@ -168,7 +168,7 @@ function buildBackURL(args){
 		return {repo_id:args.repo_id,path:current_path,url:cau};
 	};	
 };
-function ToMainBranch(){
+function TomasterBranch(){
 	var args = ParseURLArgs();
 	location.href = "/repo/?id=" + args.repo_id;
 };
@@ -223,7 +223,7 @@ function geturl(){
 			if (i == 4 || i > 6)	
 				link += url[i] + "/";
 			if (i == 5)
-				link += url[i] + "/main/";
+				link += url[i] + "/master/";
 			i++;
 		};
 		link = link.substring(link.length-1,-1);
@@ -258,7 +258,7 @@ function open_github(){
 	var path = "https://www.github.com/";
 	var args = ParseURLArgs();
 	path += JSON.parse(window.db["repos_" + args.repo_id]).fullname;
-	path += "/blob/main/";
+	path += "/blob/master/";
 	path += args.path;
 	window.open(path,"_blank");
 };
