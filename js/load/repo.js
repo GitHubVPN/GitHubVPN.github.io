@@ -1,3 +1,17 @@
+/**
+ * @Author          : lihugang
+ * @Date            : 2022-04-12 13:01:25
+ * @LastEditTime    : 2022-04-16 17:12:26
+ * @LastEditors     : lihugang
+ * @Description     : 
+ * @FilePath        : c:\Servers\vpn\GitHubVPN.github.io\js\load\repo.js
+ * @Copyright (c) lihugang
+ * @长风破浪会有时 直挂云帆济沧海
+ * @There will be times when the wind and waves break, and the sails will be hung straight to the sea.
+ * @ * * * 
+ * @是非成败转头空 青山依旧在 几度夕阳红
+ * @Whether it's right or wrong, success or failure, it's all empty now, and it's all gone with the passage of time. The green hills of the year still exist, and the sun still rises and sets.
+ */
 rate_limit();
 if (window.db.token){
 	if (window.db.username)
@@ -60,3 +74,8 @@ function new_file(){
 	var args = ParseURLArgs();
 	location.href = "/newfile/" + dat.split("?")[0] + "?repo_id=" + args.id + "&path=&url=https://api.github.com/repos/" + JSON.parse(window.db["repos_" + args.id]).fullname + "/contents/";
 };
+function go_upload_files(){
+	var dat = location.href.substring(location.origin.length + 6);
+	var args = ParseURLArgs();
+	location.href = "/upload/" + dat.split("?")[0] + "?repo_id=" + args.id + "&path=&url=https://api.github.com/repos/" + JSON.parse(window.db["repos_" + args.id]).fullname + "/contents";
+}
